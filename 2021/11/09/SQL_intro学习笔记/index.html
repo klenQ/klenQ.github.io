@@ -1,0 +1,496 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="MySQL 学习笔记"><meta name="keywords" content="Database,入门,SQL"><meta name="author" content="Jianyu Qiu"><meta name="copyright" content="Jianyu Qiu"><title>MySQL 学习笔记 | Klen's Blog</title><link rel="shortcut icon" href="/melody-favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://v1.hitokoto.cn/?encode=js&amp;charset=utf-8&amp;select=.footer_custom_text" defer></script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL"><span class="toc-number">1.</span> <span class="toc-text">MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text">分组函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0%E4%B8%8D%E5%8F%AF%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E5%86%8Dwhere%E5%AD%90%E5%8F%A5%E5%BD%93%E4%B8%AD"><span class="toc-number">1.1.0.0.1.</span> <span class="toc-text">分组函数不可直接使用再where子句当中</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#count-%E4%B8%8Ecount-%E6%9F%90%E4%B8%AA%E5%AD%97%E6%AE%B5%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.0.0.2.</span> <span class="toc-text">count(*) 与count(某个字段的区别)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0%E5%8F%AF%E4%BB%A5%E7%BB%84%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">1.1.0.0.3.</span> <span class="toc-text">分组函数可以组合使用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Group-By-%E5%92%8C-having"><span class="toc-number">1.2.</span> <span class="toc-text">Group By 和 having</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Group-by"><span class="toc-number">1.2.1.</span> <span class="toc-text">Group by</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E5%B7%A5%E4%BD%9C%E5%B2%97%E4%BD%8D%E7%9A%84%E6%9C%80%E9%AB%98%E8%96%AA%E8%B5%84"><span class="toc-number">1.2.1.0.1.</span> <span class="toc-text">案例：找出每个工作岗位的最高薪资</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%9C%89group-by%E7%9A%84-%E8%AF%9D-select%E5%8F%AA%E8%83%BD%E6%9C%89%E5%8F%82%E5%8A%A0%E4%BA%86%E5%88%86%E7%BB%84%E7%9A%84%E5%AD%97%E6%AE%B5%E5%92%8C%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.1.0.1.1.</span> <span class="toc-text">有group by的 话 select只能有参加了分组的字段和分组函数</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AF%8F%E4%B8%AA%E5%B2%97%E4%BD%8D%E7%9A%84%E5%B9%B3%E5%9D%87%E8%96%AA%E8%B5%84"><span class="toc-number">1.2.1.0.2.</span> <span class="toc-text">每个岗位的平均薪资</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E4%B8%8D%E5%90%8C%E5%B7%A5%E4%BD%9C%E5%B2%97%E4%BD%8D%E7%9A%84%E6%9C%80%E9%AB%98%E8%96%AA%E8%B5%84"><span class="toc-number">1.2.1.0.3.</span> <span class="toc-text">找出不同工作岗位的最高薪资</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Having"><span class="toc-number">1.2.2.</span> <span class="toc-text">Having</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E9%83%A8%E9%97%A8%E7%9A%84%E6%9C%80%E9%AB%98%E8%96%AA%E8%B5%84%EF%BC%8C%E8%A6%81%E6%B1%82%E6%98%BE%E7%A4%BA%E8%96%AA%E8%B5%84%E5%A4%A7%E4%BA%8E2500%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">1.2.2.0.1.</span> <span class="toc-text">找出每个部门的最高薪资，要求显示薪资大于2500的数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E9%83%A8%E9%97%A8%E7%9A%84%E5%B9%B3%E5%9D%87%E8%96%AA%E8%B5%84"><span class="toc-number">1.2.2.0.2.</span> <span class="toc-text">找出每个部门的平均薪资</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84DQL%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.3.</span> <span class="toc-text">总结一个完整的DQL语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.4.</span> <span class="toc-text">连接查询</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%BB%E9%99%A4%E9%87%8D%E5%A4%8D%E8%AE%B0%E5%BD%95"><span class="toc-number">1.4.0.0.1.</span> <span class="toc-text">去除重复记录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E5%B2%97%E4%BD%8D%E7%9A%84%E6%95%B0%E9%87%8F"><span class="toc-number">1.4.0.0.2.</span> <span class="toc-text">统计岗位的数量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">连接查询</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8C%89%E7%85%A7%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E5%88%92%E5%88%86%E5%88%86%E7%B1%BB%EF%BC%9A"><span class="toc-number">1.4.1.0.1.</span> <span class="toc-text">按照连接查询的连接方式划分分类：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8%E8%A1%A8%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E4%B8%AD%E6%9C%89%E7%A7%8D%E7%8E%B0%E8%B1%A1%EF%BC%9A%E7%AC%9B%E5%8D%A1%E5%B0%94%E4%B9%98%E7%A7%AF%E7%8E%B0%E8%B1%A1"><span class="toc-number">1.4.1.0.2.</span> <span class="toc-text">在表的连接查询中有种现象：笛卡尔乘积现象</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E5%91%98%E5%B7%A5%E9%83%A8%E9%97%A8%E5%90%8D%E7%A7%B0%EF%BC%8C%E8%A6%81%E6%B1%82%E6%98%AF%E6%98%BE%E7%A4%BA%E5%91%98%E5%B7%A5%E5%92%8C%E9%83%A8%E9%97%A8%E5%90%8D%E7%A7%B0"><span class="toc-number">1.4.1.0.2.1.</span> <span class="toc-text">找出每个员工部门名称，要求是显示员工和部门名称</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E8%BF%9E%E6%8E%A5%E4%B9%8B%E7%AD%89%E5%80%BC%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.4.2.</span> <span class="toc-text">内连接之等值连接</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%AF%8F%E4%B8%AA%E5%91%98%E5%B7%A5%E7%9A%84%E9%83%A8%E9%97%A8%E5%90%8D%E7%A7%B0"><span class="toc-number">1.4.2.0.1.</span> <span class="toc-text">查询每个员工的部门名称</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E8%BF%9E%E6%8E%A5%E4%B9%8B%E9%9D%9E%E7%AD%89%E5%80%BC%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.4.3.</span> <span class="toc-text">内连接之非等值连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.4.4.</span> <span class="toc-text">自连接</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E5%91%98%E5%B7%A5%E7%9A%84%E4%B8%8A%E7%BA%A7%E9%A2%86%E5%AF%BC%EF%BC%8C%E8%A6%81%E6%B1%82%E6%98%BE%E7%A4%BA%E5%91%98%E5%B7%A5%E5%90%8D%E5%92%8C%E5%AF%B9%E5%BA%94%E7%9A%84%E9%A2%86%E5%AF%BC%E5%90%8D"><span class="toc-number">1.4.4.0.1.</span> <span class="toc-text">找出每个员工的上级领导，要求显示员工名和对应的领导名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.4.5.</span> <span class="toc-text">外连接</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%96%E8%BF%9E%E6%8E%A5%E7%9A%84%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-number">1.4.5.0.1.</span> <span class="toc-text">外连接的分类？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%89%80%E6%9C%89%E5%91%98%E5%B7%A5%E7%9A%84%E4%B8%8A%E7%BA%A7%E9%A2%86%E5%AF%BC%EF%BC%9F%EF%BC%88%E6%89%80%E6%9C%89%E5%91%98%E5%B7%A5%E9%83%BD%E8%A6%81%E6%98%BE%E7%A4%BA%E5%87%BA%E6%9D%A5%EF%BC%89"><span class="toc-number">1.4.5.0.2.</span> <span class="toc-text">找出所有员工的上级领导？（所有员工都要显示出来）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E5%93%AA%E4%B8%AA%E9%83%A8%E9%97%A8%E6%B2%A1%E6%9C%89%E5%91%98%E5%B7%A5"><span class="toc-number">1.4.5.0.3.</span> <span class="toc-text">找出哪个部门没有员工</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%98%E6%9C%89%E4%B8%80%E4%B8%AA%E5%85%A8%E8%BF%9E%E6%8E%A5%EF%BC%8C%E6%AF%94%E8%BE%83%E5%B0%91%E7%94%A8"><span class="toc-number">1.4.5.0.4.</span> <span class="toc-text">还有一个全连接，比较少用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E5%BC%A0%E8%A1%A8%E6%80%8E%E4%B9%88%E8%BF%9E"><span class="toc-number">1.4.6.</span> <span class="toc-text">三张表怎么连</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E5%91%98%E5%B7%A5%E7%9A%84%E9%83%A8%E9%97%A8%E5%90%8D%E7%A7%B0%E4%BB%A5%E5%8F%8A%E5%B7%A5%E8%B5%84%E7%AD%89%E7%BA%A7"><span class="toc-number">1.4.6.0.1.</span> <span class="toc-text">找出每个员工的部门名称以及工资等级</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E5%91%98%E5%B7%A5%E7%9A%84%E9%83%A8%E9%97%A8%E5%90%8D%E7%A7%B0%E4%BB%A5%E5%8F%8A%E5%B7%A5%E8%B5%84%E7%AD%89%E7%BA%A7-%E4%BB%A5%E5%8F%8A%E4%B8%8A%E7%BA%A7%E9%A2%86%E5%AF%BC"><span class="toc-number">1.4.6.0.2.</span> <span class="toc-text">找出每个员工的部门名称以及工资等级 以及上级领导</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.5.</span> <span class="toc-text">子查询</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E8%96%AA%E8%B5%84%E9%AB%98%E4%BA%8E%E5%B9%B3%E5%9D%87%E8%96%AA%E8%B5%84%E7%9A%84%E5%91%98%E5%B7%A5"><span class="toc-number">1.5.0.0.1.</span> <span class="toc-text">找出薪资高于平均薪资的员工</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#where%E5%90%8E%E9%9D%A2%E5%B5%8C%E5%A5%97%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.5.0.0.2.</span> <span class="toc-text">where后面嵌套子查询</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#from%E5%90%8E%E9%9D%A2%E5%B5%8C%E5%A5%97%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.5.0.0.3.</span> <span class="toc-text">from后面嵌套子查询</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E9%83%A8%E9%97%A8%E5%B9%B3%E5%9D%87%E8%96%AA%E6%B0%B4-%E6%8C%89%E7%85%A7%E9%83%A8%E9%97%A8%E7%BC%96%E5%8F%B7%E5%88%86%E7%BB%84-%E6%B1%82sal%E7%9A%84%E5%B9%B3%E5%9D%87%E5%80%BC"><span class="toc-number">1.5.0.0.3.1.</span> <span class="toc-text">找出每个部门平均薪水(按照部门编号分组, 求sal的平均值)</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%AF%8F%E4%B8%AA%E9%83%A8%E9%97%A8%E9%83%BD%E8%96%AA%E8%B5%84%E7%AD%89%E7%BA%A7%E7%9A%84%E5%B9%B3%E5%9D%87%E5%80%BC"><span class="toc-number">1.5.0.0.3.2.</span> <span class="toc-text">找出每个部门都薪资等级的平均值</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8select%E5%90%8E%E9%9D%A2%E5%B5%8C%E5%A5%97"><span class="toc-number">1.5.0.0.4.</span> <span class="toc-text">在select后面嵌套</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Union-%E5%8F%AF%E4%BB%A5%E5%B0%86%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E9%9B%86%E6%83%B3%E5%8A%A0"><span class="toc-number">1.6.</span> <span class="toc-text">Union (可以将查询结果集想加)</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E5%B7%A5%E4%BD%9C%E5%B2%97%E4%BD%8D%E6%98%AFsalesman%E5%92%8Cmanager%E7%9A%84%E5%91%98%E5%B7%A5"><span class="toc-number">1.6.0.0.0.1.</span> <span class="toc-text">找出工作岗位是salesman和manager的员工</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Limit-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2-MySQL%E7%89%B9%E6%9C%89"><span class="toc-number">1.7.</span> <span class="toc-text">Limit (分页查询, MySQL特有)</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8F%96%E5%87%BA%E5%B7%A5%E8%B5%84%E5%89%8D%E4%BA%94%E5%90%8D%E7%9A%84%E5%91%98%E5%B7%A5"><span class="toc-number">1.7.0.0.0.1.</span> <span class="toc-text">取出工资前五名的员工</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E5%B7%A5%E8%B5%84%E6%8E%92%E5%90%8D%E7%AC%AC%E5%9B%9B%E5%88%B0%E7%AC%AC%E4%B9%9D%E7%9A%84%E5%91%98%E5%B7%A5"><span class="toc-number">1.7.0.0.0.2.</span> <span class="toc-text">找出工资排名第四到第九的员工</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E7%9A%84%E5%88%86%E9%A1%B5%E6%A0%87%E5%87%86"><span class="toc-number">1.7.0.0.1.</span> <span class="toc-text">通用的分页标准</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-number">1.8.</span> <span class="toc-text">表的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BB%BA%E6%A0%87%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.8.0.0.1.</span> <span class="toc-text">建标语句的格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MySQL%E4%B8%AD%E7%9A%84%E5%AD%97%E6%AE%B5%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.8.0.0.2.</span> <span class="toc-text">MySQL中的字段数据类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%80%89%E6%8B%A9"><span class="toc-number">1.8.0.0.3.</span> <span class="toc-text">类型的选择</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#insert-%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="toc-number">1.9.</span> <span class="toc-text">insert 插入数据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E6%8F%92%E5%85%A5%E5%A4%9A%E8%A1%8C%E6%95%B0%E6%8D%AE"><span class="toc-number">1.9.0.0.1.</span> <span class="toc-text">一次插入多行数据</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6"><span class="toc-number">1.10.</span> <span class="toc-text">表的复制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E6%8F%92%E5%85%A5%E8%A1%A8"><span class="toc-number">1.11.</span> <span class="toc-text">将查询结果插入表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE"><span class="toc-number">1.12.</span> <span class="toc-text">修改数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="toc-number">1.13.</span> <span class="toc-text">删除数据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E5%88%A0%E9%99%A4%E5%A4%A7%E8%A1%A8"><span class="toc-number">1.13.0.0.1.</span> <span class="toc-text">怎么删除大表</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="toc-number">1.14.</span> <span class="toc-text">修改表结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.15.</span> <span class="toc-text">约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.15.1.</span> <span class="toc-text">常见约束</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.15.1.0.1.</span> <span class="toc-text">主键的作用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%A1%A8%E7%BA%A7%E7%BA%A6%E6%9D%9F%E5%AE%9A%E4%B9%89%E4%B8%BB%E9%94%AE"><span class="toc-number">1.15.1.0.2.</span> <span class="toc-text">使用表级约束定义主键</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MySQL%E6%8F%90%E4%BE%9B%E7%9A%84%E4%B8%BB%E9%94%AE%E8%87%AA%E5%A2%9E"><span class="toc-number">1.15.1.0.3.</span> <span class="toc-text">MySQL提供的主键自增</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F-foreign-key"><span class="toc-number">1.15.1.0.4.</span> <span class="toc-text">外键约束 (foreign key)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E7%BA%A6%E6%9D%9F-check-%E2%80%94%E2%80%93-Oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%89check%E7%BA%A6%E6%9D%9F-mysql%E6%B2%A1%E6%9C%89"><span class="toc-number">1.15.1.0.5.</span> <span class="toc-text">检查约束 (check) —– Oracle数据库有check约束, mysql没有</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">1.16.</span> <span class="toc-text">存储引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">1.16.1.</span> <span class="toc-text">常见的存储引擎</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.17.</span> <span class="toc-text">事务</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.17.0.0.1.</span> <span class="toc-text">概念:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.17.0.0.2.</span> <span class="toc-text">原理:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-number">1.17.0.0.3.</span> <span class="toc-text">事务的特性:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="toc-number">1.17.0.0.4.</span> <span class="toc-text">事务之间的隔离性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%BC%94%E7%A4%BA%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.17.0.0.5.</span> <span class="toc-text">演示事务</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">1.18.</span> <span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E7%B4%A2%E5%BC%95"><span class="toc-number">1.18.0.0.1.</span> <span class="toc-text">添加索引</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE"><span class="toc-number">1.19.</span> <span class="toc-text">视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DBA%E5%91%BD%E4%BB%A4"><span class="toc-number">1.20.</span> <span class="toc-text">DBA命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA"><span class="toc-number">1.20.1.</span> <span class="toc-text">导入导出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="toc-number">1.21.</span> <span class="toc-text">数据库设计三范式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="toc-number">1.21.0.0.1.</span> <span class="toc-text">三范式:</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A-%E4%B8%89%E5%BC%A0%E8%A1%A8-%E5%85%B3%E7%B3%BB%E8%A1%A8%E4%B8%A4%E4%B8%AA%E5%A4%96%E9%94%AE"><span class="toc-number">1.21.0.0.1.1.</span> <span class="toc-text">多对多? 三张表, 关系表两个外键</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A-%E4%B8%A4%E5%BC%A0%E8%A1%A8-%E5%A4%9A%E7%9A%84%E8%A1%A8%E5%8A%A0%E5%A4%96%E9%94%AE"><span class="toc-number">1.21.0.0.1.2.</span> <span class="toc-text">一对多? 两张表, 多的表加外键</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.21.0.0.2.</span> <span class="toc-text">一对一怎么设计:</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">作业题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%A2%98-%E5%8F%96%E5%BE%97%E6%AF%8F%E4%B8%AA%E9%83%A8%E9%97%A8%E6%9C%80%E9%AB%98%E8%96%AA%E6%B0%B4%E7%9A%84%E4%BA%BA%E5%91%98%E5%90%8D%E7%A7%B0"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">第一题: 取得每个部门最高薪水的人员名称</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">Jianyu Qiu</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">7</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">6</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">1</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(/top_img/banner.jpg)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Klen's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">MySQL 学习笔记</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2021-11-09</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Notes/">Notes</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h1 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h1><p>Data Query Language</p>
+<p>Data Manipulation Language</p>
+<p>Data Definition Language</p>
+<p>Transaction Control Language</p>
+<p>Data Control Language</p>
+<span id="more"></span>
+
+<h2 id="分组函数"><a href="#分组函数" class="headerlink" title="分组函数"></a>分组函数</h2><h5 id="分组函数不可直接使用再where子句当中"><a href="#分组函数不可直接使用再where子句当中" class="headerlink" title="分组函数不可直接使用再where子句当中"></a>分组函数不可直接使用再where子句当中</h5><p>找出工资高与平均工资的员工</p>
+<p>错误：无效使用分组函数</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename, sal <span class="keyword">from</span> emp <span class="keyword">where</span> sal <span class="operator">&gt;</span> <span class="built_in">avg</span>(sal); </span><br></pre></td></tr></table></figure>
+
+<p>​    因为where比group by先执行</p>
+<p>​    所以不能用分组函数，因为分组函数一定需要先分组</p>
+<p>正确：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename,sal <span class="keyword">from</span> emp <span class="keyword">where</span> sal <span class="operator">&gt;</span> (<span class="keyword">select</span> <span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp);</span><br></pre></td></tr></table></figure>
+
+<h5 id="count-与count-某个字段的区别"><a href="#count-与count-某个字段的区别" class="headerlink" title="count(*) 与count(某个字段的区别)"></a>count(*) 与count(某个字段的区别)</h5><p>​    count(*)：总记录条数</p>
+<p>​    count(某个字段)：字段中不为NULL的个数</p>
+<h5 id="分组函数可以组合使用"><a href="#分组函数可以组合使用" class="headerlink" title="分组函数可以组合使用"></a>分组函数可以组合使用</h5><h2 id="Group-By-和-having"><a href="#Group-By-和-having" class="headerlink" title="Group By 和 having"></a>Group By 和 having</h2><p>​    group by: 按照某个字段或者某些字段进行分组</p>
+<p>​    having: having 是对分组之后的数据进行再次过滤</p>
+<h3 id="Group-by"><a href="#Group-by" class="headerlink" title="Group by"></a>Group by</h3><h5 id="案例：找出每个工作岗位的最高薪资"><a href="#案例：找出每个工作岗位的最高薪资" class="headerlink" title="案例：找出每个工作岗位的最高薪资"></a>案例：找出每个工作岗位的最高薪资</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">max</span>(sal),job <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> job;</span><br></pre></td></tr></table></figure>
+
+<p>分组函数一般都会和group by联合使用，所以叫分组函数</p>
+<p>分组函数一定在group by 之后执行</p>
+<p>没有group by 的话，整张表的数据会自成一组</p>
+<h6 id="有group-by的-话-select只能有参加了分组的字段和分组函数"><a href="#有group-by的-话-select只能有参加了分组的字段和分组函数" class="headerlink" title="有group by的 话 select只能有参加了分组的字段和分组函数"></a>有group by的 话 select只能有参加了分组的字段和分组函数</h6><p>错误：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename,<span class="built_in">max</span>(sal),job <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> job;</span><br></pre></td></tr></table></figure>
+
+<h5 id="每个岗位的平均薪资"><a href="#每个岗位的平均薪资" class="headerlink" title="每个岗位的平均薪资"></a>每个岗位的平均薪资</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> job,<span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> job</span><br></pre></td></tr></table></figure>
+
+<h5 id="找出不同工作岗位的最高薪资"><a href="#找出不同工作岗位的最高薪资" class="headerlink" title="找出不同工作岗位的最高薪资"></a>找出不同工作岗位的最高薪资</h5><p>联合分组deptno,job.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> deptnom,job,<span class="built_in">max</span>(sal)<span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> deptnom,job</span><br></pre></td></tr></table></figure>
+
+<h3 id="Having"><a href="#Having" class="headerlink" title="Having"></a>Having</h3><h5 id="找出每个部门的最高薪资，要求显示薪资大于2500的数据"><a href="#找出每个部门的最高薪资，要求显示薪资大于2500的数据" class="headerlink" title="找出每个部门的最高薪资，要求显示薪资大于2500的数据"></a>找出每个部门的最高薪资，要求显示薪资大于2500的数据</h5><p>第一步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">max</span>(sal) , deptno form emp <span class="keyword">group</span> <span class="keyword">by</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<p>第二步 找出薪资大于2900</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">max</span>(sal) , deptno <span class="keyword">from</span> emp <span class="keyword">group</span>  <span class="keyword">by</span> deptno <span class="keyword">having</span> <span class="built_in">max</span>(sal) <span class="operator">&gt;</span><span class="number">2900</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是这种效率低</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">max</span>(sal) , deptno <span class="keyword">from</span> emp <span class="keyword">where</span> sal<span class="operator">&gt;</span><span class="number">2500</span> <span class="keyword">group</span> <span class="keyword">by</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<p>先用where过滤后效率高</p>
+<h5 id="找出每个部门的平均薪资"><a href="#找出每个部门的平均薪资" class="headerlink" title="找出每个部门的平均薪资"></a>找出每个部门的平均薪资</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> deptno, <span class="built_in">avg</span>(sal) <span class="keyword">from</span> rmp <span class="keyword">group</span> <span class="keyword">by</span> deptno <span class="keyword">having</span> <span class="built_in">avg</span>(sal) <span class="operator">&gt;</span> <span class="number">2000</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结一个完整的DQL语句"><a href="#总结一个完整的DQL语句" class="headerlink" title="总结一个完整的DQL语句"></a>总结一个完整的DQL语句</h2><p>有规定的执行顺序</p>
+<p>select        5</p>
+<p>from         1</p>
+<p>where        2</p>
+<p>group by    3</p>
+<p>having        4</p>
+<p>order by        6</p>
+<h2 id="连接查询"><a href="#连接查询" class="headerlink" title="连接查询"></a>连接查询</h2><h5 id="去除重复记录"><a href="#去除重复记录" class="headerlink" title="去除重复记录"></a>去除重复记录</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> job <span class="keyword">from</span> emp</span><br></pre></td></tr></table></figure>
+
+<p>distinct只能出现在所有字段的最前方</p>
+<p>可以联合去重</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> deptno,job <span class="keyword">from</span> emp;</span><br></pre></td></tr></table></figure>
+
+<h5 id="统计岗位的数量"><a href="#统计岗位的数量" class="headerlink" title="统计岗位的数量"></a>统计岗位的数量</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span> (<span class="keyword">distinct</span> job) <span class="keyword">from</span> emp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接查询-1"><a href="#连接查询-1" class="headerlink" title="连接查询"></a>连接查询</h3><h5 id="按照连接查询的连接方式划分分类："><a href="#按照连接查询的连接方式划分分类：" class="headerlink" title="按照连接查询的连接方式划分分类："></a>按照连接查询的连接方式划分分类：</h5><p>内连接</p>
+<p>​        等值连接</p>
+<p>​        非等值连接</p>
+<p>​        自链接</p>
+<p>​    外连接</p>
+<p>​        左外连接</p>
+<p>​        右外连接</p>
+<p>​    全连接</p>
+<h5 id="在表的连接查询中有种现象：笛卡尔乘积现象"><a href="#在表的连接查询中有种现象：笛卡尔乘积现象" class="headerlink" title="在表的连接查询中有种现象：笛卡尔乘积现象"></a>在表的连接查询中有种现象：笛卡尔乘积现象</h5><h6 id="找出每个员工部门名称，要求是显示员工和部门名称"><a href="#找出每个员工部门名称，要求是显示员工和部门名称" class="headerlink" title="找出每个员工部门名称，要求是显示员工和部门名称"></a>找出每个员工部门名称，要求是显示员工和部门名称</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.ename d.dname <span class="keyword">from</span> emp e, dept d <span class="keyword">where</span> e.deptno <span class="operator">=</span> d.deptno</span><br></pre></td></tr></table></figure>
+
+<p>这样是sql92语法，匹配次数还是笛卡尔乘积14*4=56次</p>
+<h3 id="内连接之等值连接"><a href="#内连接之等值连接" class="headerlink" title="内连接之等值连接"></a>内连接之等值连接</h3><p>条件是等量关系</p>
+<h5 id="查询每个员工的部门名称"><a href="#查询每个员工的部门名称" class="headerlink" title="查询每个员工的部门名称"></a>查询每个员工的部门名称</h5><p>SQL92:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">selcet e.name,d.name <span class="keyword">from</span> emp e, dept d <span class="keyword">where</span> e.deptno<span class="operator">=</span>d.deptno;</span><br></pre></td></tr></table></figure>
+
+<p>SQL99:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">selcet e.name,d.name <span class="keyword">from</span> emp e <span class="keyword">join</span> dept d <span class="keyword">on</span> e.deptno<span class="operator">=</span>d.deptno;</span><br></pre></td></tr></table></figure>
+
+<p>表1 join 表2 on 连接语法 where …</p>
+<p>SQL 结构更清晰，表连接条件和where过滤条件分离了</p>
+<p>省略了inner join的inner</p>
+<h3 id="内连接之非等值连接"><a href="#内连接之非等值连接" class="headerlink" title="内连接之非等值连接"></a>内连接之非等值连接</h3><p>连接条件是非等量关系</p>
+<p>找出每个员工的工资等级，要求显示工名、工资、工资等级。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.name, e.sal, s.grade </span><br><span class="line"><span class="keyword">from</span> emp e</span><br><span class="line"><span class="keyword">join</span> salgrade s</span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.losal <span class="keyword">and</span> s.hisal</span><br></pre></td></tr></table></figure>
+
+<h3 id="自连接"><a href="#自连接" class="headerlink" title="自连接"></a>自连接</h3><p>最大特点是一张表看成两张表。自己连接自己</p>
+<h5 id="找出每个员工的上级领导，要求显示员工名和对应的领导名"><a href="#找出每个员工的上级领导，要求显示员工名和对应的领导名" class="headerlink" title="找出每个员工的上级领导，要求显示员工名和对应的领导名"></a>找出每个员工的上级领导，要求显示员工名和对应的领导名</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.name,b.name </span><br><span class="line"><span class="keyword">from</span> emp a</span><br><span class="line"><span class="keyword">join</span> emp b</span><br><span class="line"><span class="keyword">on</span> a.mgr<span class="operator">=</span>b.name</span><br></pre></td></tr></table></figure>
+
+<h3 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h3><p>内连接：把AB两张表能匹配的记录查询出来，没有主副之分</p>
+<p>外连接：有主表和副表，当副表无法匹配，副表自动模拟出NULL与之匹配</p>
+<h5 id="外连接的分类？"><a href="#外连接的分类？" class="headerlink" title="外连接的分类？"></a>外连接的分类？</h5><p>左外连接：表示左边的表是主表</p>
+<p>右外连接：表示右边的表是住表</p>
+<p>左连接有右连接的血法，右连接也有对应左连接的写法</p>
+<h5 id="找出所有员工的上级领导？（所有员工都要显示出来）"><a href="#找出所有员工的上级领导？（所有员工都要显示出来）" class="headerlink" title="找出所有员工的上级领导？（所有员工都要显示出来）"></a>找出所有员工的上级领导？（所有员工都要显示出来）</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.name, b.name</span><br><span class="line"><span class="keyword">from</span> emp a</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> emp b</span><br><span class="line"><span class="keyword">on</span> a.mgr<span class="operator">=</span>b.name</span><br></pre></td></tr></table></figure>
+
+<p>left outer join , outer 可以省略</p>
+<p>外连接最重要的特点是主表属于无条件查出来</p>
+<h5 id="找出哪个部门没有员工"><a href="#找出哪个部门没有员工" class="headerlink" title="找出哪个部门没有员工"></a>找出哪个部门没有员工</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> dept d</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> emp e</span><br><span class="line"><span class="keyword">on</span> d.deptno<span class="operator">=</span>e.deptno</span><br><span class="line"><span class="keyword">where</span> e.empno <span class="keyword">is</span> <span class="keyword">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="还有一个全连接，比较少用"><a href="#还有一个全连接，比较少用" class="headerlink" title="还有一个全连接，比较少用"></a>还有一个全连接，比较少用</h5><h3 id="三张表怎么连"><a href="#三张表怎么连" class="headerlink" title="三张表怎么连"></a>三张表怎么连</h3><h5 id="找出每个员工的部门名称以及工资等级"><a href="#找出每个员工的部门名称以及工资等级" class="headerlink" title="找出每个员工的部门名称以及工资等级"></a>找出每个员工的部门名称以及工资等级</h5><p>如果复杂就先分步拆解</p>
+<p>内连接</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.name,d.dname,s.grade</span><br><span class="line"><span class="keyword">from</span> emp e</span><br><span class="line"><span class="keyword">join</span> dept d</span><br><span class="line"><span class="keyword">on</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">join</span> salgrade s</span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.losal <span class="keyword">and</span> s.hisal;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>… join A join B join C on …</p>
+<p>表示AB表先连接，结果再和C连接</p>
+<h5 id="找出每个员工的部门名称以及工资等级-以及上级领导"><a href="#找出每个员工的部门名称以及工资等级-以及上级领导" class="headerlink" title="找出每个员工的部门名称以及工资等级 以及上级领导"></a>找出每个员工的部门名称以及工资等级 以及上级领导</h5><p>外连接</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.name,d.dname,s.grade</span><br><span class="line"><span class="keyword">from</span> emp e</span><br><span class="line"><span class="keyword">join</span> dept d</span><br><span class="line"><span class="keyword">on</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">join</span> salgrade s</span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.losal <span class="keyword">and</span> s.hisal;</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> emp e1</span><br><span class="line"><span class="keyword">on</span> e.mgr <span class="operator">=</span> e1.empno;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h2><p>子查询就是被嵌套的语句</p>
+<h5 id="找出薪资高于平均薪资的员工"><a href="#找出薪资高于平均薪资的员工" class="headerlink" title="找出薪资高于平均薪资的员工"></a>找出薪资高于平均薪资的员工</h5><h5 id="where后面嵌套子查询"><a href="#where后面嵌套子查询" class="headerlink" title="where后面嵌套子查询"></a>where后面嵌套子查询</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> emp <span class="keyword">where</span> sal <span class="operator">&gt;</span> <span class="number">2073.214286</span></span><br></pre></td></tr></table></figure>
+
+<p>合并两条语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> emp <span class="keyword">where</span> sal <span class="operator">&gt;</span> (<span class="keyword">select</span> <span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp);</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="from后面嵌套子查询"><a href="#from后面嵌套子查询" class="headerlink" title="from后面嵌套子查询"></a>from后面嵌套子查询</h5><h6 id="找出每个部门平均薪水-按照部门编号分组-求sal的平均值"><a href="#找出每个部门平均薪水-按照部门编号分组-求sal的平均值" class="headerlink" title="找出每个部门平均薪水(按照部门编号分组, 求sal的平均值)"></a>找出每个部门平均薪水(按照部门编号分组, 求sal的平均值)</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> deptno,<span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<p>将以上表当做临时表t, 让这张表和salgrade s表链接, 条件是: t.avgsal between s.losal and s.hisal</p>
+<p>然后进行嵌套</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> t.<span class="operator">*</span>, s.grade</span><br><span class="line"><span class="keyword">from</span> (<span class="keyword">select</span> deptno,<span class="built_in">avg</span>(sal) <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> deptno) t</span><br><span class="line"><span class="keyword">join</span> salgrade s</span><br><span class="line"><span class="keyword">on</span> t.avgsal <span class="keyword">between</span> s.losal <span class="keyword">and</span> s.hisal;</span><br></pre></td></tr></table></figure>
+
+<h6 id="找出每个部门都薪资等级的平均值"><a href="#找出每个部门都薪资等级的平均值" class="headerlink" title="找出每个部门都薪资等级的平均值"></a>找出每个部门都薪资等级的平均值</h6><p>找出每个员工的薪资等级</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.ename, s.grade </span><br><span class="line"><span class="keyword">from</span> emp e </span><br><span class="line"><span class="keyword">join</span> salgrade s </span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.LOSAL <span class="keyword">and</span> s.HISAL</span><br></pre></td></tr></table></figure>
+
+<p>Kalen的答案:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> d.deptno, <span class="built_in">avg</span>(t.grade)</span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">(<span class="keyword">select</span> e.ename, e.DEPTNO, s.grade </span><br><span class="line"><span class="keyword">from</span> emp e </span><br><span class="line"><span class="keyword">join</span> salgrade s </span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.LOSAL <span class="keyword">and</span> s.HISAL) t</span><br><span class="line"><span class="keyword">join</span> dept d</span><br><span class="line"><span class="keyword">where</span> d.deptno <span class="operator">=</span> t.deptno</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> deptno</span><br></pre></td></tr></table></figure>
+
+
+
+<p>视频里的答案</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.deptno, <span class="built_in">avg</span>(s.grade)</span><br><span class="line"><span class="keyword">from</span> emp e </span><br><span class="line"><span class="keyword">join</span> salgrade s </span><br><span class="line"><span class="keyword">on</span> e.sal <span class="keyword">between</span> s.LOSAL <span class="keyword">and</span> s.HISAL</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> </span><br><span class="line">e.deptno;</span><br></pre></td></tr></table></figure>
+
+<p>不需要嵌套的时候不要嵌套</p>
+<h5 id="在select后面嵌套"><a href="#在select后面嵌套" class="headerlink" title="在select后面嵌套"></a>在select后面嵌套</h5><p>找出每个员工所在部门名称, 要求显示员工名部门名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.ename, d.dname</span><br><span class="line"><span class="keyword">from</span> emp e</span><br><span class="line"><span class="keyword">join</span> dept d</span><br><span class="line"><span class="keyword">on</span> e.deptno <span class="operator">=</span> d.deptno;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.name, e.deptno,</span><br><span class="line">	(<span class="keyword">select</span> d.dname <span class="keyword">from</span> dept d <span class="keyword">where</span> e.deptno<span class="operator">=</span>d.deptno) <span class="keyword">as</span> dname</span><br><span class="line"><span class="keyword">from</span> emp e;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Union-可以将查询结果集想加"><a href="#Union-可以将查询结果集想加" class="headerlink" title="Union (可以将查询结果集想加)"></a>Union (可以将查询结果集想加)</h2><h6 id="找出工作岗位是salesman和manager的员工"><a href="#找出工作岗位是salesman和manager的员工" class="headerlink" title="找出工作岗位是salesman和manager的员工"></a>找出工作岗位是salesman和manager的员工</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename,job <span class="keyword">from</span> emp <span class="keyword">where</span> job <span class="operator">=</span> <span class="string">&#x27;MANAGER&#x27;</span></span><br><span class="line"><span class="keyword">union</span></span><br><span class="line"><span class="keyword">select</span> ename,job <span class="keyword">from</span> emp <span class="keyword">where</span> job <span class="operator">=</span> <span class="string">&#x27;SALESMAN&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="Limit-分页查询-MySQL特有"><a href="#Limit-分页查询-MySQL特有" class="headerlink" title="Limit (分页查询, MySQL特有)"></a>Limit (分页查询, MySQL特有)</h2><p>不通用,oracle中有个相同机制叫rownum</p>
+<p>语法机制:</p>
+<p>​    limit startindex, length</p>
+<p>​        startIndex 表示起始位置</p>
+<p>​        length 表示取几个</p>
+<h6 id="取出工资前五名的员工"><a href="#取出工资前五名的员工" class="headerlink" title="取出工资前五名的员工"></a>取出工资前五名的员工</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename, sal <span class="keyword">from</span> emp <span class="keyword">order</span> <span class="keyword">by</span> sal <span class="keyword">desc</span> limit <span class="number">0</span>,<span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>limit 是SQL语句中最后执行的环节</p>
+<h6 id="找出工资排名第四到第九的员工"><a href="#找出工资排名第四到第九的员工" class="headerlink" title="找出工资排名第四到第九的员工"></a>找出工资排名第四到第九的员工</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename, sal <span class="keyword">from</span> emp <span class="keyword">order</span> <span class="keyword">by</span> sal <span class="keyword">desc</span> limit <span class="number">3</span>,<span class="number">6</span>;</span><br></pre></td></tr></table></figure>
+
+<p>6代表第几个, 而不是最后的index</p>
+<h5 id="通用的分页标准"><a href="#通用的分页标准" class="headerlink" title="通用的分页标准"></a>通用的分页标准</h5><p>每页三条记录:</p>
+<p>第一页: 0, 3</p>
+<p>第二页: 3, 3</p>
+<p>第三页: 6, 3</p>
+<p>每页起始都是3*(n-1)</p>
+<h2 id="表的创建"><a href="#表的创建" class="headerlink" title="表的创建"></a>表的创建</h2><h5 id="建标语句的格式"><a href="#建标语句的格式" class="headerlink" title="建标语句的格式"></a>建标语句的格式</h5><p>create table 表名(</p>
+<p>​        字段名1 数据类型,</p>
+<p>​        字段名2 数据类型,</p>
+<p>​        字段名3 数据类型,</p>
+<p>​        ……</p>
+<p>);</p>
+<h5 id="MySQL中的字段数据类型"><a href="#MySQL中的字段数据类型" class="headerlink" title="MySQL中的字段数据类型"></a>MySQL中的字段数据类型</h5><p>​    常见的:</p>
+<p>​        int  bigint   整数型</p>
+<p>​        float  double    浮点类型</p>
+<p>​        char   varchar 定长字符串/不定长字符串</p>
+<p>​        date    datetime   日期/带秒日期</p>
+<p>​        BLOB  二进制大对象  (存储图片, 视频等流媒体)   Binary Large Object</p>
+<p>​        CLOB  字符大对象 (存储大文本,比如4G的字符串) Character Large Object</p>
+<h5 id="类型的选择"><a href="#类型的选择" class="headerlink" title="类型的选择"></a>类型的选择</h5><p>char和varchar: </p>
+<p>​    比如name名字如果是char(6) 底层就只分配6个空间, 不能超出6个字符长度,超出报错,不够自动补到6</p>
+<p>​    而varchar动态存储分配, 但也可以规定长度,根据实际长度动态分配长度</p>
+<p>​    实际开发中当某个字段数据长度不发生改变的时候, 比如性别, 生日 就用char</p>
+<p>​    会变比如简介就用varchar</p>
+<p>BLOB和CLOB: </p>
+<p>​    电影表: t_movie </p>
+<p>​    id(int)         name(varchar)            playtime(date/char)          poster(BLOB)              plot(CLOB)</p>
+<p>BLOB 和 CLOB 不能用insert 插入, 一般Java IO 流</p>
+<p>一般比较少见, 一般大文件都是放地址在表里面</p>
+<p>建一个学生表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_student(</span><br><span class="line">	<span class="keyword">no</span> <span class="type">bigint</span>,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">    sex <span class="type">char</span>(<span class="number">1</span>),</span><br><span class="line">    classno <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">    birth <span class="type">char</span>(<span class="number">10</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="insert-插入数据"><a href="#insert-插入数据" class="headerlink" title="insert 插入数据"></a>insert 插入数据</h2><p>语法格式:</p>
+<p>​    insert into 表名(字段1,字段2,字段3) values(值1,值2,值3);</p>
+<p>​    要求字段数量与值数量相同</p>
+<p>​    </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_student(<span class="keyword">no</span>,name,sex,classno,birth) <span class="keyword">values</span> (<span class="number">1</span>,<span class="string">&#x27;zhangsan&#x27;</span>, <span class="number">1</span>, <span class="string">&#x27;gaosan1ban&#x27;</span>, <span class="string">&#x27;1950-10-12&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>只写一个字段的话, 剩下字段自动NULL</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_student(</span><br><span class="line">	<span class="keyword">no</span> <span class="type">bigint</span>,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">    sex <span class="type">char</span>(<span class="number">1</span>) defalut <span class="number">1</span>,</span><br><span class="line">    classno <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">    birth <span class="type">char</span>(<span class="number">10</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>可以用default 加上默认值, 不然默认值为NULL</p>
+<p>insert执行完以后表格中必然多一条数据, insert不能用于修改数据</p>
+<p>只能使用update进行修改</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_student <span class="keyword">values</span>(<span class="number">1</span>, <span class="string">&#x27;value&#x27;</span>,<span class="string">&#x27;0&#x27;</span>,<span class="string">&#x27;高三二班&#x27;</span>,<span class="string">&#x27;1999-12-18&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>前面的括号内容可以省略, 但是这样后面values字段数量和顺序必须与列数量吻合</p>
+<h5 id="一次插入多行数据"><a href="#一次插入多行数据" class="headerlink" title="一次插入多行数据"></a>一次插入多行数据</h5><p>逗号隔开</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_student(<span class="keyword">no</span>,name,sex,classno,birth) </span><br><span class="line"><span class="keyword">values</span> (<span class="number">1</span>,<span class="string">&#x27;zhangsan&#x27;</span>, <span class="number">1</span>, <span class="string">&#x27;gaosan1ban&#x27;</span>, <span class="string">&#x27;1950-10-12&#x27;</span>),</span><br><span class="line"><span class="keyword">values</span> (<span class="number">2</span>,<span class="string">&#x27;zhang&#x27;</span>, <span class="number">1</span>, <span class="string">&#x27;gaosan3ban&#x27;</span>, <span class="string">&#x27;1950-10-12&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="表的复制"><a href="#表的复制" class="headerlink" title="表的复制"></a>表的复制</h2><p>语法</p>
+<p>​    create table 表名 as select 语句;</p>
+<p>​    讲查询结果复制成一张表</p>
+<h2 id="将查询结果插入表"><a href="#将查询结果插入表" class="headerlink" title="将查询结果插入表"></a>将查询结果插入表</h2><p>语法</p>
+<p>insert into 表名 select 语句</p>
+<h2 id="修改数据"><a href="#修改数据" class="headerlink" title="修改数据"></a>修改数据</h2><p>语法格式:</p>
+<p>​    update 表名 set 字段名=值1, 字段名2=值2,… where 条件;</p>
+<p>注意没有约束条件会整张表全部更新</p>
+<h2 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h2><p>语法</p>
+<p>​    delete from 表名 where 条件</p>
+<p>没有where约束全部删除</p>
+<h5 id="怎么删除大表"><a href="#怎么删除大表" class="headerlink" title="怎么删除大表"></a>怎么删除大表</h5><p>truncate table 表名, 表被截断不可回滚</p>
+<h2 id="修改表结构"><a href="#修改表结构" class="headerlink" title="修改表结构"></a>修改表结构</h2><p>实际开发中很少修改表结构, 因为这是对之前设计的否定</p>
+<p>java中不会出现表结构的语句</p>
+<p>一般只有CRUD</p>
+<p>create retriece update delete</p>
+<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><h3 id="常见约束"><a href="#常见约束" class="headerlink" title="常见约束"></a>常见约束</h3><ol>
+<li><p>唯一性约束 (unique) 不能重复, 但可以为NULL</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> if <span class="keyword">exists</span> t_user;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user&#123;</span><br><span class="line">	id <span class="type">int</span>,</span><br><span class="line">	username <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">unique</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>给多个列添加unique</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user&#123;</span><br><span class="line"></span><br><span class="line">	id <span class="type">int</span>,</span><br><span class="line">	usercode <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	username varchat(<span class="number">255</span>),</span><br><span class="line">	<span class="keyword">unique</span>(usercode, username)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>以上代表 usercode, username 联合起来不重复, 只是一个约束</p>
+<p>在每个列后面单独加unique是列级约束</p>
+<p>unique()是表级约束</p>
+</li>
+<li><p>非空约束 (not null) 不能为null</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> if <span class="keyword">exists</span> t_user;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span>,</span><br><span class="line">    username <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">not</span> <span class="keyword">null</span>,</span><br><span class="line">    password <span class="type">varchar</span>(<span class="number">255</span>)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_user(id,password) val(<span class="number">1</span>,<span class="string">&#x27;123&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码插入错误, 因为username没有默认值, 不能为空</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_user(id,username,password) val(<span class="number">1</span>,<span class="string">&#x27;list&#x27;</span>,<span class="string">&#x27;123&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>not null只有列级约束, 没有表级约束</p>
+</li>
+<li><p><strong>主键约束 (primary key) , 约束字段既不能为null, 也不能重复</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span> <span class="keyword">primary</span> key,</span><br><span class="line">	username <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	email <span class="type">varchar</span>(<span class="number">255</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>id是主键, 不能为null, 也不能重复</p>
+<p>列级约束</p>
+<h5 id="主键的作用"><a href="#主键的作用" class="headerlink" title="主键的作用"></a>主键的作用</h5><ul>
+<li>表的设计三范式中有要求, 第一范式就要求任何一张表都应该有主键</li>
+<li>主键的作用: 主键值是这行记录在这张表中的唯一标识. (e.g. 身份证号)</li>
+</ul>
+<p>主键的分类: </p>
+<ul>
+<li>单一主键</li>
+<li>复合主键(多个一段联合起来添加一个主键约束)<ul>
+<li>复合主键违背三范式, 所以不建议使用</li>
+</ul>
+</li>
+</ul>
+<p>根据主键的性质来划分:</p>
+<ul>
+<li>自然主键</li>
+<li>业务主键: 主键值跟系统业务挂钩 (不推荐)– 因为业务一旦改变, 主键不好修改</li>
+</ul>
+<h5 id="使用表级约束定义主键"><a href="#使用表级约束定义主键" class="headerlink" title="使用表级约束定义主键"></a>使用表级约束定义主键</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span>, </span><br><span class="line">	username <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	<span class="keyword">primary</span> key(id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>复合主键</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span>, </span><br><span class="line">	username <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	<span class="keyword">primary</span> key(id, username)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="MySQL提供的主键自增"><a href="#MySQL提供的主键自增" class="headerlink" title="MySQL提供的主键自增"></a>MySQL<strong>提供的主键自增</strong></h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span> <span class="keyword">primary</span> key auto_increment, </span><br><span class="line">	username <span class="type">varchar</span>(<span class="number">255</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>如果插入不给值, 就默认自增</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_user(username) <span class="keyword">value</span>(<span class="string">&#x27;a&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Oracle 的自增机制叫做序列(sequence)</p>
+</li>
+<li><h5 id="外键约束-foreign-key"><a href="#外键约束-foreign-key" class="headerlink" title="外键约束 (foreign key)"></a>外键约束 (foreign key)</h5><p>业务背景:</p>
+<p>设计数据库表, 用来维护学生和班级的信息?</p>
+<ol>
+<li><p>第一种, 一张表储存所有数据—–冗余</p>
+</li>
+<li><p>第二种, 两张表</p>
+<p>t_class</p>
+<p>cno(primary)              cname</p>
+<hr>
+<p>t_student</p>
+<p>sno(primary)               sname               cno(foreign key)</p>
+<hr>
+</li>
+</ol>
+<p>t_student 中的classno字段引用t_class中的cno字段, 此时t_student叫子表, t_class叫父表</p>
+<p>删除数据的时候, 先子后父</p>
+<p>添加数据的时候, 先父后子</p>
+<p>创建表的时候, 先父后子</p>
+<p>删表的时候, 先子后父</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_class(</span><br><span class="line">	cno <span class="type">int</span>,</span><br><span class="line">	cname <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	<span class="keyword">primary</span> key(cno)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_class(</span><br><span class="line">	sno <span class="type">int</span>, </span><br><span class="line">	sname <span class="type">varchar</span>(<span class="number">255</span>),</span><br><span class="line">	classno <span class="type">int</span>,</span><br><span class="line">    <span class="keyword">primary</span> key(sno),</span><br><span class="line">	<span class="keyword">foreign</span> key(classno) reference t_class(cno)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>外键可以为NULL</p>
+<p>外键引用的字段可以不是主键, 但是必须有唯一性约束</p>
+</li>
+<li><h5 id="检查约束-check-—–-Oracle数据库有check约束-mysql没有"><a href="#检查约束-check-—–-Oracle数据库有check约束-mysql没有" class="headerlink" title="检查约束 (check) —– Oracle数据库有check约束, mysql没有"></a>检查约束 (check) —– Oracle数据库有check约束, mysql没有</h5></li>
+</ol>
+<h2 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h2><p>完整的建表语句: </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_use(</span><br><span class="line">	id <span class="type">int</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">)ENGINE <span class="operator">=</span> InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf<span class="number">-8</span>;</span><br></pre></td></tr></table></figure>
+
+<p>InnoDB引擎是MySQL的默认建表存储引擎</p>
+<p>Oracle里的对应的功能就叫存储方式, 不叫存储引擎</p>
+<p>每个存储引擎各有优缺点</p>
+<p>查看当前MySQL支持的存储引擎: </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> engines \G</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见的存储引擎"><a href="#常见的存储引擎" class="headerlink" title="常见的存储引擎"></a>常见的存储引擎</h3><ul>
+<li>MyISAM<ul>
+<li>不支持事务—Transaction: NO</li>
+<li>是最常用的存储引擎, 但不是默认的</li>
+<li>使用三个文件表示每个表<ul>
+<li>格式文件(.frm)</li>
+<li>数据文件(.MYD)</li>
+<li>索引文件(.MYI)</li>
+</ul>
+</li>
+<li>可以压缩, 节省空间, 转换为只读</li>
+</ul>
+</li>
+<li>InnoDB<ul>
+<li>支持事务</li>
+<li>这种存储引擎最安全</li>
+<li>行级锁</li>
+<li>无法被压缩</li>
+<li>支持级联删除和级联更新</li>
+</ul>
+</li>
+<li>MEMORY存储引擎<ul>
+<li>不支持事务</li>
+<li>数据容易丢失</li>
+<li>数据存储在内存中</li>
+<li>查询数据快</li>
+</ul>
+</li>
+</ul>
+<p>​    </p>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h5 id="概念"><a href="#概念" class="headerlink" title="概念:"></a>概念:</h5><p>一个事务是一个完整的业务逻辑单元, 不可再分</p>
+<p>想要保证两条或以上的DML语句同时成功或者同时失败, 那么就需要事务机制</p>
+<h5 id="原理"><a href="#原理" class="headerlink" title="原理:"></a>原理:</h5><p>执行语句, 成功之后, 记录到历史操作, 不会真正修改硬盘上的数据</p>
+<p>知道事务提交或者回滚, 事务就结束了, 硬盘上的内容就修改了, 所有历史清空</p>
+<h5 id="事务的特性"><a href="#事务的特性" class="headerlink" title="事务的特性:"></a>事务的特性:</h5><p>ACID:</p>
+<p>A:原子性–事务是最小的工作单元</p>
+<p>C:一致性–事务必须同时成功或者同时失败</p>
+<p>I:隔离性–事务A和事务B之间具有隔离</p>
+<p>D:持久性–持久性说的是最终数据必须持久化到硬盘中, 事务才算成功的结束</p>
+<h5 id="事务之间的隔离性"><a href="#事务之间的隔离性" class="headerlink" title="事务之间的隔离性"></a>事务之间的隔离性</h5><p>隔离性存在隔离级别, 理论上隔离级别包括4个</p>
+<ol>
+<li><p>读未提交(read uncommited) —对方事务还没提交, 我们当前事务可以读取到对方未提交的数据, 读未提交存在赃读(Dirty Read)现象</p>
+</li>
+<li><p>读以提交(read commited)—对方事务提交之后我方可以读取到</p>
+<ul>
+<li>问题是不可重复读 (读的到别人提交后的数据)</li>
+<li>解决了赃读现象</li>
+</ul>
+</li>
+<li><p>可重复读(repeatable read)</p>
+<ul>
+<li>解决了不可重复读(读不到的事别人)</li>
+<li>问题是, 读取到的数据是幻象</li>
+</ul>
+</li>
+<li><p>序列化/串行化 (serializable)</p>
+<ul>
+<li>解决了所有问题</li>
+<li>效率低, 要排队</li>
+</ul>
+</li>
+</ol>
+<p>oracle默认级别是2, MySQL默认是3</p>
+<h5 id="演示事务"><a href="#演示事务" class="headerlink" title="演示事务"></a>演示事务</h5><ul>
+<li><p>MySQL事务默认情况下是自动提交的</p>
+<ul>
+<li>(只要执行一条DML则语句提交一次) start transcation (关闭自动提交)</li>
+</ul>
+</li>
+<li><p>准备表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(</span><br><span class="line">	id <span class="type">int</span> <span class="keyword">primary</span> key auto_increment,</span><br><span class="line">	username varchat(<span class="number">255</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+<li><p>演示</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> transcation;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_user(username) <span class="keyword">value</span>(lizi);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_user(username) <span class="keyword">value</span>(zhangsan);</span><br><span class="line"><span class="keyword">rollback</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>设置隔离级别</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> transaction isolation level read uncommitted</span><br></pre></td></tr></table></figure>
+
+<p>查看隔离级别</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> @<span class="variable">@global</span>.tx.isolation;</span><br></pre></td></tr></table></figure>
+
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引就是目录, 在数据库方面, 查询一张表时有两种方法</p>
+<p>​    第一种: 全表扫描</p>
+<p>​    第二种: 根据索引检索(效率很高)</p>
+<p>索引提速的原理是缩小了扫描范围</p>
+<p>索引是给某个字段, 或者说某些字段添加索引</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename, sal <span class="keyword">from</span> emp <span class="keyword">where</span> ename<span class="operator">=</span> <span class="string">&#x27;SMITH&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>以上语句在ename没有索引的时候会进行全表扫描, 扫描ename字段所有值</p>
+<p>ename有索引以后, sql会根据索引扫描, 快速定位</p>
+<p>什么时候考虑给字段添加索引</p>
+<ul>
+<li>数据量庞大</li>
+<li>该字段很少DML操作</li>
+<li>改字段经常出现在where语句中</li>
+</ul>
+<p>注意: 主键和有unique约束的字段会自动添加索引</p>
+<p>根据主键检索效率较高, 尽量根据主键检索</p>
+<h5 id="添加索引"><a href="#添加索引" class="headerlink" title="添加索引"></a>添加索引</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index emp_sal_index <span class="keyword">on</span> emp(sal)</span><br></pre></td></tr></table></figure>
+
+<p>索引底层采用的数据结构是 B +  Tree, 然后通过物理地址定位表中的数据</p>
+<p>索引分类:</p>
+<ul>
+<li>单一索引</li>
+<li>复合索引</li>
+<li>主键索引</li>
+<li>唯一索引</li>
+</ul>
+<p>索引什么时候失效</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename <span class="keyword">from</span> emp <span class="keyword">where</span> ename <span class="keyword">like</span> <span class="string">&#x27;%A%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>模糊查询, 第一个通配符的是%, 这个时候索引是失效的.</p>
+<h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><p>同一张表的数据, 通过不同角度去看</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> myview <span class="keyword">as</span> <span class="keyword">select</span> empno, ename, <span class="keyword">from</span> emp;</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">view</span> myview</span><br></pre></td></tr></table></figure>
+
+<p>对视图进行增删改查, 会影响到原表数据 (通过视图影响原表数据的, 不是直接操作的原表)</p>
+<p>可以对视图进行CRUD操作</p>
+<p>视图可以隐藏表的实现细节, 保密级别较高的系统, 数据库只对外提供相关视图, java程序员只对视图对象进行CRUD</p>
+<h2 id="DBA命令"><a href="#DBA命令" class="headerlink" title="DBA命令"></a>DBA命令</h2><h3 id="导入导出"><a href="#导入导出" class="headerlink" title="导入导出"></a>导入导出</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump bjpowernode<span class="operator">&gt;</span>D:\bipowernode.sql <span class="operator">-</span>uroot <span class="operator">-</span>p333</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database bjpowernode;</span><br><span class="line">use bjpowernode;</span><br><span class="line">source D:\bjpoernode.sql</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数据库设计三范式"><a href="#数据库设计三范式" class="headerlink" title="数据库设计三范式"></a>数据库设计三范式</h2><p>为了解决数据冗余</p>
+<h5 id="三范式"><a href="#三范式" class="headerlink" title="三范式:"></a>三范式:</h5><ol>
+<li><p>第一范式: 任何一张表都应该有主键, 并且每个字段原子性不可再分</p>
+</li>
+<li><p>第二范式: 每个非主键字段都应该完全依赖主键, 不产生部分依赖</p>
+<ol>
+<li><h6 id="多对多-三张表-关系表两个外键"><a href="#多对多-三张表-关系表两个外键" class="headerlink" title="多对多? 三张表, 关系表两个外键"></a>多对多? 三张表, 关系表两个外键</h6></li>
+</ol>
+</li>
+<li><p>第三范式: 建立在第三范式的基础之上, 所有非主键字段直接依赖主键字段, 不能产生传递依赖</p>
+<ol>
+<li><h6 id="一对多-两张表-多的表加外键"><a href="#一对多-两张表-多的表加外键" class="headerlink" title="一对多? 两张表, 多的表加外键"></a>一对多? 两张表, 多的表加外键</h6></li>
+</ol>
+</li>
+</ol>
+<p>提醒: 实际的开发中, 以满足客户的需求为主, 有的时候会拿冗余换执行速度</p>
+<h5 id="一对一怎么设计"><a href="#一对一怎么设计" class="headerlink" title="一对一怎么设计:"></a>一对一怎么设计:</h5><p>两种方案: </p>
+<ul>
+<li>主键共享, 附表的主键同时也是外键</li>
+<li>外键唯一, 加一个外键, 外键加上unique约束</li>
+</ul>
+<h1 id="作业题"><a href="#作业题" class="headerlink" title="作业题"></a>作业题</h1><h4 id="第一题-取得每个部门最高薪水的人员名称"><a href="#第一题-取得每个部门最高薪水的人员名称" class="headerlink" title="第一题: 取得每个部门最高薪水的人员名称"></a>第一题: 取得每个部门最高薪水的人员名称</h4><p>我的答案: </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ename, deptno, <span class="built_in">max</span>(sal) <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> deptno</span><br></pre></td></tr></table></figure>
+
+<p>标准答案: </p>
+<p>第一步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> deptno, <span class="built_in">max</span>(sal) <span class="keyword">as</span> maxsal </span><br><span class="line"><span class="keyword">from</span> emp </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> deptno</span><br></pre></td></tr></table></figure>
+
+<p>第二步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> e.ename </span><br><span class="line"><span class="keyword">from</span> (<span class="keyword">select</span> deptno, <span class="built_in">max</span>(sal) <span class="keyword">from</span> emp <span class="keyword">group</span> <span class="keyword">by</span> deptno) t</span><br><span class="line"><span class="keyword">join</span> emp e</span><br><span class="line"><span class="keyword">on</span> e.deptno <span class="operator">=</span> t.deptno <span class="keyword">and</span> e.sal <span class="operator">=</span> t.maxsal</span><br></pre></td></tr></table></figure>
+
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Jianyu Qiu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2021/11/09/SQL_intro学习笔记/">http://example.com/2021/11/09/SQL_intro学习笔记/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Database/">Database</a><a class="post-meta__tags" href="/tags/%E5%85%A5%E9%97%A8/">入门</a><a class="post-meta__tags" href="/tags/SQL/">SQL</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2021/11/09/NodeJS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa fa-chevron-left">  </i><span>Node.js 学习笔记</span></a></div><div class="next-post pull-right"><a href="/2021/11/09/JDBC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span>JDBC 学习笔记</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(/top_img/banner.jpg)"><div class="layout" id="footer"><div class="copyright">&copy;2020 - 2021 By Jianyu Qiu</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">hitokoto</div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>
