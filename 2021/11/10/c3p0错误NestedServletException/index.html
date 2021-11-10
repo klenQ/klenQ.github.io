@@ -18,14 +18,14 @@
 
 <h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><p>控制台报错: </p>
 <p>![Snipaste_2021-11-10_15-07-56 (2)](Snipaste_2021-11-10_15-07-56 (2).png)</p>
-<p><img src="/Snipaste_2021-11-10_15-08-16.png" alt="Snipaste_2021-11-10_15-08-16"></p>
+<p><img src="/2021/11/10/c3p0%E9%94%99%E8%AF%AFNestedServletException/Snipaste_2021-11-10_15-08-16.png" alt="Snipaste_2021-11-10_15-08-16"></p>
 <p>问题根源在maven依赖导入的jar包版本</p>
 <p>问题有几种可能: </p>
 <ol>
 <li>试试更改c3p0依赖版本</li>
 </ol>
 <p>改之前的版本</p>
-<p><img src="/image-20211110225704141.png" alt="image-20211110225704141"></p>
+<p><img src="/2021/11/10/c3p0%E9%94%99%E8%AF%AFNestedServletException/image-20211110225704141.png" alt="image-20211110225704141"></p>
 <p>更改为一下版本: </p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.mchange<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>c3p0<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9.5.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -34,7 +34,7 @@
 <ol start="2">
 <li>如果还出问题, 可能是mybatis的版本冲突</li>
 </ol>
-<p><img src="/image-20211110225925763.png" alt="image-20211110225925763"></p>
+<p><img src="/2021/11/10/c3p0%E9%94%99%E8%AF%AFNestedServletException/image-20211110225925763.png" alt="image-20211110225925763"></p>
 <p>试试更改为 3.4.5 版本: </p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
