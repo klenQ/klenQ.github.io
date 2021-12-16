@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="Git 和 GitHub 基础"><meta name="keywords" content="Github"><meta name="author" content="Jianyu"><meta name="copyright" content="Jianyu"><title>Git 和 GitHub 基础 | Klen's Blog</title><link rel="shortcut icon" href="/triangle.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://v1.hitokoto.cn/?encode=js&amp;charset=utf-8&amp;select=.footer_custom_text" defer></script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#git"><span class="toc-number">1.</span> <span class="toc-text">git</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git%E7%BB%93%E6%9E%84"><span class="toc-number"></span> <span class="toc-text">Git结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Git%E5%92%8C%E6%89%98%E7%AE%A1%E4%B8%AD%E5%BF%83"><span class="toc-number"></span> <span class="toc-text">Git和托管中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%BA%93%E5%92%8C%E8%BF%9C%E7%A8%8B%E5%BA%93"><span class="toc-number"></span> <span class="toc-text">本地库和远程库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%BA%93%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number"></span> <span class="toc-text">本地库初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%AD%BE%E5%90%8D"><span class="toc-number"></span> <span class="toc-text">设置签名:</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%8F%90%E4%BA%A4"><span class="toc-number"></span> <span class="toc-text">添加提交</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E7%89%88%E6%9C%AC%E7%A9%BF%E6%A2%AD"><span class="toc-number"></span> <span class="toc-text">本地版本穿梭</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%BF%9B%E5%90%8E%E9%80%80"><span class="toc-number"></span> <span class="toc-text">前进后退</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E7%A1%AC%E5%8F%82%E6%95%B0%E5%AF%B9%E6%AF%94"><span class="toc-number"></span> <span class="toc-text">软硬参数对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E6%96%87%E4%BB%B6"><span class="toc-number"></span> <span class="toc-text">比较文件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86"><span class="toc-number"></span> <span class="toc-text">分支管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number"></span> <span class="toc-text">分支的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="toc-number"></span> <span class="toc-text">分支操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="toc-number">1.</span> <span class="toc-text">解决冲突</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number"></span> <span class="toc-text">Git基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C"><span class="toc-number"></span> <span class="toc-text">哈希</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number"></span> <span class="toc-text">版本数据管理机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86-1"><span class="toc-number">1.</span> <span class="toc-text">分支管理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E5%BA%93Github"><span class="toc-number"></span> <span class="toc-text">远程库Github</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%8B%E9%9A%86clone"><span class="toc-number"></span> <span class="toc-text">克隆clone</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E5%BA%93%E7%9A%84%E6%8B%89%E5%8F%96-%E6%9B%B4%E6%96%B0"><span class="toc-number"></span> <span class="toc-text">远程库的拉取(更新)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E5%90%8C%E5%BC%80%E5%8F%91%E6%97%B6%E7%9A%84%E5%86%B2%E7%AA%81"><span class="toc-number"></span> <span class="toc-text">协同开发时的冲突</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">要点:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#github%E8%B7%A8%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C"><span class="toc-number"></span> <span class="toc-text">github跨团队协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH"><span class="toc-number"></span> <span class="toc-text">SSH</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number"></span> <span class="toc-text">Git工作流</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#GitFlow"><span class="toc-number"></span> <span class="toc-text">GitFlow</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GitLab%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number"></span> <span class="toc-text">GitLab服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C"><span class="toc-number"></span> <span class="toc-text">操作</span></a></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">Jianyu</div><div class="author-info__description text-center"></div><div class="follow-button"><a target="_blank" rel="noopener" href="https://github.com/klenQ/">Follow me on Github</a></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">29</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">20</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">4</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/klenQ/klenQ.github.io/master/img/top_img/ff7_img_2.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Klen's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">Git 和 GitHub 基础</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2021-12-15</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Notes/">Notes</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><p>git version 2.34.1 - 64 bit</p>
+<span id="more"></span>
+
+
+
+<h1 id="Git结构"><a href="#Git结构" class="headerlink" title="Git结构"></a>Git结构</h1><ul>
+<li>工作区</li>
+<li>暂存区</li>
+<li>本地库</li>
+</ul>
+<h2 id="Git和托管中心"><a href="#Git和托管中心" class="headerlink" title="Git和托管中心"></a>Git和托管中心</h2><p>局域网: </p>
+<ul>
+<li>GitLab服务器</li>
+</ul>
+<p>外网: </p>
+<ul>
+<li><p>GitHub</p>
+</li>
+<li><p>Gitee</p>
+</li>
+</ul>
+<h2 id="本地库和远程库"><a href="#本地库和远程库" class="headerlink" title="本地库和远程库"></a>本地库和远程库</h2><p>私人库或者团队内部协作:</p>
+<ul>
+<li>push 可以将本地库的代码推送到远程库</li>
+<li>clone 将远程库的代码下载到本地库</li>
+<li>团队外的人不可以push到远程库</li>
+</ul>
+<p>团队外协作: </p>
+<ul>
+<li><p>fork 复制到自己的远程库</p>
+</li>
+<li><p>clone 下载到自己的本地库</p>
+</li>
+<li><p>push 到自己的远程库</p>
+</li>
+<li><p>pull request 申请将自己的远程库内容合并到对方远程库</p>
+</li>
+<li><p>merge 远程库合并</p>
+</li>
+<li><p>pull 然后就可以拉取合并后的代码</p>
+</li>
+</ul>
+<h1 id="本地库初始化"><a href="#本地库初始化" class="headerlink" title="本地库初始化"></a>本地库初始化</h1><p>命令: </p>
+<ul>
+<li>git init</li>
+<li>git add</li>
+</ul>
+<h2 id="设置签名"><a href="#设置签名" class="headerlink" title="设置签名:"></a>设置签名:</h2><ul>
+<li><p>形式: </p>
+<ul>
+<li><p>用户名</p>
+</li>
+<li><p>Email</p>
+</li>
+</ul>
+</li>
+<li><p>作用: 区分不同开发人员身份</p>
+</li>
+<li><p>这里的签名和登录远程库的账号密码没有关系</p>
+</li>
+<li><p>命令</p>
+<ul>
+<li>项目级别/仓库级别<ul>
+<li>git config user.name tom</li>
+<li>git config user.email <a href="mailto:&#116;&#111;&#109;&#64;&#103;&#x6d;&#97;&#105;&#x6c;&#46;&#99;&#111;&#x6d;">&#116;&#111;&#109;&#64;&#103;&#x6d;&#97;&#105;&#x6c;&#46;&#99;&#111;&#x6d;</a></li>
+<li>可以使用 <code>git config --unset &lt;credential name&gt;</code>取消设置的签名</li>
+</ul>
+</li>
+<li>系统用户级别: 登录当前操作系统的用户范围<ul>
+<li>git config –global …</li>
+</ul>
+</li>
+<li>优先级<ul>
+<li>就近原则: 项目级别优先于系统用户级别, 二者都有的时候采用项目级别的签名</li>
+<li>如果只有系统用户级别的签名, 就以系统用户级别的签名为准</li>
+<li>二者都没有不允许</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>设置完成以后可以使用<code>cat ./git/config</code>, 查看项目级别的签名</p>
+<p>系统用户级别的签名在<code>C:\user\用户名下的.gitconfig</code>里面</p>
+<h1 id="添加提交"><a href="#添加提交" class="headerlink" title="添加提交"></a>添加提交</h1><p>git status 查看状态: </p>
+<ul>
+<li>on branch</li>
+<li>no commits files: </li>
+<li>untracked files</li>
+<li>nothing to commit / change to be committed</li>
+</ul>
+<p>添加提交文件:</p>
+<ul>
+<li><p>用 <code>git add &lt;file&gt;</code> 将文件加入到暂存区</p>
+</li>
+<li><p>用 <code>git rm --cached &lt;file&gt;</code> 将文件从暂存区中删除</p>
+</li>
+<li><p>用 <code>git commit &lt;file&gt;</code> 提交到本地库</p>
+</li>
+<li><p>用 <code>git add &lt;file&gt;</code> 将修改过的文件更新到暂存区, 也可以直接<code>git commit -a</code> 直接提交</p>
+</li>
+<li><p>用 <code>git restore &lt;file&gt;</code>将修改过的内容取消</p>
+</li>
+<li><p>用 <code>git commit -m &quot;&lt;messages&gt;&quot; &lt;file&gt;</code>不用进vim直接设置提交日志并提交</p>
+</li>
+</ul>
+<h1 id="本地版本穿梭"><a href="#本地版本穿梭" class="headerlink" title="本地版本穿梭"></a>本地版本穿梭</h1><ul>
+<li><code>git log</code> 查看本地仓库历史版本<ul>
+<li><code>git log --pretty=oneline</code> 以简洁方式显示</li>
+<li><code>git log --oneline</code> 更简洁</li>
+<li><code>git reflog</code>简洁, 但是显示更多有价值的信息<ul>
+<li><code>HEAD&#123;&#125;</code>显示了从当前版本去到对应版本所需要的步数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="前进后退"><a href="#前进后退" class="headerlink" title="前进后退"></a>前进后退</h2><p>基于索引值操作: </p>
+<ul>
+<li><code>git reset --hard &lt;索引值&gt;</code> 退回历史版本</li>
+<li>往前进也是一样的指令</li>
+</ul>
+<p>基于^的操作: </p>
+<ul>
+<li>只能后退不能往前</li>
+<li><code>git reset --hard HEAD^^^</code>回退3个记录</li>
+</ul>
+<p>基于~的操作: </p>
+<ul>
+<li><p>也是只能后退</p>
+</li>
+<li><p><code>git reset --hard HEAD~3</code> 后退三个记录</p>
+</li>
+</ul>
+<h2 id="软硬参数对比"><a href="#软硬参数对比" class="headerlink" title="软硬参数对比"></a>软硬参数对比</h2><p><code>hard``soft``mixed</code>三个参数的区别</p>
+<ul>
+<li>soft<ul>
+<li>不会碰暂存区</li>
+<li>仅仅移动HEAD指针</li>
+</ul>
+</li>
+<li>mixed<ul>
+<li>移动HEAD指针</li>
+<li>重置暂存区</li>
+</ul>
+</li>
+<li>hard</li>
+<li>在本地库移动HEAD</li>
+<li>重置暂存区</li>
+<li>重置工作区</li>
+</ul>
+<p>删除文件后找回: 就直接退回到对应还有该文件的版本就好了, 之前的版本记录一直都存在, 前提是删除前提交过该文件到本地库</p>
+<h2 id="比较文件"><a href="#比较文件" class="headerlink" title="比较文件"></a>比较文件</h2><ul>
+<li><code>git diff &lt;filename&gt;</code> 与暂存区的文件进行比较</li>
+<li><code>git diff HEAD &lt;filename&gt;</code>与本地库文件进行比较<ul>
+<li><code>git diff HEAD^ &lt;filename&gt;</code>或者和某个特定本地库记录比较</li>
+</ul>
+</li>
+<li><code>git diff </code>不指定文件名就可以比较所有文件</li>
+</ul>
+<h1 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h1><h2 id="分支的功能"><a href="#分支的功能" class="headerlink" title="分支的功能"></a>分支的功能</h2><ul>
+<li><p>每个分支开发过程中彼此独立</p>
+</li>
+<li><p>如果某个分支出问题可以直接删除分支, 不影响其他分支</p>
+</li>
+<li><p>开发完成后合并到主分支</p>
+</li>
+<li><p>主分支出bug一般开一个hot_fix分支进行修复</p>
+</li>
+</ul>
+<h2 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h2><ul>
+<li><code>git branch -v</code> 查看分支</li>
+<li><code>git branch &lt;branch name&gt;</code>创建新分支</li>
+<li><code>git checkout &lt;branch name&gt;</code>切换分支</li>
+</ul>
+<p>合并分支: </p>
+<ol>
+<li>切换到被合并的分支上</li>
+<li>执行merge命令<ul>
+<li>git merge <branch name> 把较为新的分支合并到当前分支</li>
+</ul>
+</li>
+</ol>
+<h3 id="解决冲突"><a href="#解决冲突" class="headerlink" title="解决冲突"></a>解决冲突</h3><ol>
+<li>编辑文件删除特殊符号, </li>
+<li>把文件修改到满意的程度</li>
+<li><code>git add</code>标记冲突解决</li>
+<li><code>git commit -m &quot;&lt;log&gt;&quot;</code>结束合并<strong>不可以带文件名</strong></li>
+</ol>
+<h1 id="Git基本原理"><a href="#Git基本原理" class="headerlink" title="Git基本原理"></a>Git基本原理</h1><h2 id="哈希"><a href="#哈希" class="headerlink" title="哈希"></a>哈希</h2><p>一种加密算法, 明文-&gt;加密算法-&gt;密文</p>
+<ul>
+<li>不管输入数据量多大, 输入同一个算法, 得到的加密长度一致</li>
+<li>哈希算法确定, 输入数据确定, 输出数据就也能保持不变</li>
+<li>只要更改输入数据, 输出一定改变</li>
+<li>不可逆</li>
+</ul>
+<p>常见hash加密算法: </p>
+<ul>
+<li>MD5</li>
+<li>SHA1</li>
+<li>CRC32</li>
+</ul>
+<p>哈希值的变化可以代表数据的更改和丢失</p>
+<p>git底层采用的是sha1的算法</p>
+<h2 id="版本数据管理机制"><a href="#版本数据管理机制" class="headerlink" title="版本数据管理机制"></a>版本数据管理机制</h2><ul>
+<li>SVN的版本控制方式是增量式版本控制, 换言之就是只保存更改或者添加的内容, 然后进行拼接</li>
+<li>git是快照机制, 如果文件没有更改, 则指针指向之前文件, 不会重复保存快照</li>
+<li>每个文件都会做一次哈希, 所有对象包装成tree对象也有哈希值, 然后再包装成提交数据, 也有哈希值</li>
+<li>每个提交对象还会指向一个父节点, 这样就可以管理历史版本</li>
+</ul>
+<h3 id="分支管理-1"><a href="#分支管理-1" class="headerlink" title="分支管理"></a>分支管理</h3><ul>
+<li>HEAD 指向初始分支master</li>
+<li>新分支只是创建了一个指针, 提交的时候指向新的对象</li>
+<li>切换分支的时候只是指针变了, 所以速度非常快</li>
+</ul>
+<h1 id="远程库Github"><a href="#远程库Github" class="headerlink" title="远程库Github"></a>远程库Github</h1><p>先创建远程库, </p>
+<ul>
+<li><code>git remote add origin https://[USERNAME]:[TOKEN]@git.mycompany.com/[ORGANIZATION]/[REPO].git</code> 用授权token添加远程地址</li>
+<li><code>git remote set-url origin &lt;url&gt;</code>重新设置远程库地址</li>
+<li><code>git remove -v</code> 查看设置好的地址</li>
+<li><code>git push origin &lt;branch name&gt;</code>将本地库推送至远程库 </li>
+<li><strong>注意: 如果之前使用了签名, 需要删除签名github才会显示对应账号名, 不然是以签名作为一个虚拟身份commit to repo</strong></li>
+</ul>
+<blockquote>
+<p> 此处测试暂时使用的token: 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, 7天过期</p>
+</blockquote>
+<blockquote>
+<p>参考:</p>
+<p>如何获得授权token: </p>
+<p><a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token</a></p>
+<p>如何使用token将本地库文件推送至远程库:  </p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/18935539/authenticate-with-github-using-a-token">https://stackoverflow.com/questions/18935539/authenticate-with-github-using-a-token</a></p>
+</blockquote>
+<h2 id="克隆clone"><a href="#克隆clone" class="headerlink" title="克隆clone"></a>克隆clone</h2><p>克隆特点: </p>
+<ul>
+<li>完整把远程库下载到本地</li>
+<li>创建origin远程地址别名</li>
+<li>初始化好了本地库</li>
+</ul>
+<p>命令: </p>
+<ul>
+<li><code>git clone &lt;url&gt;</code></li>
+</ul>
+<h2 id="远程库的拉取-更新"><a href="#远程库的拉取-更新" class="headerlink" title="远程库的拉取(更新)"></a>远程库的拉取(更新)</h2><p><strong>fetch 加 merge 就是pull</strong></p>
+<p>fetch merge分开操作流程: </p>
+<ul>
+<li><code>git fetch origin master</code>下载下来但是没有修改本地文件</li>
+<li><code>git checkout origin/master</code>切换到下载下来的远程库, 可以看到下载后的内容</li>
+<li><code>git checkout master</code>返回本地分支</li>
+<li><code>git merge origin/master</code>将远程库内容进行合并</li>
+<li>这样就完成了分开操作</li>
+</ul>
+<p>pull操作流程: </p>
+<ul>
+<li><p><code>git pull origin master</code></p>
+</li>
+<li><p>直接完成合并操作, 当程序比较简单不会产生冲突的时候可以使用</p>
+</li>
+</ul>
+<h2 id="协同开发时的冲突"><a href="#协同开发时的冲突" class="headerlink" title="协同开发时的冲突"></a>协同开发时的冲突</h2><p>当远程库有内容发生冲突的时候, 后推送的人就无法推送了, 必须先拉取下来, 再本地库解决了冲突才能再推送</p>
+<ol>
+<li>使用fetch修改, 或者使用pull命令直接进入merging状态</li>
+<li>修改冲突文件</li>
+<li>重复之前解决冲突时的方法, (<code>git add &lt;conflict/modified file name&gt;</code>)</li>
+<li>然后<code>git commit</code> 结束merging状态</li>
+<li><code>git push origin master</code> 结束推送状态</li>
+</ol>
+<h3 id="要点"><a href="#要点" class="headerlink" title="要点:"></a>要点:</h3><ul>
+<li>不是基于最新修改, 不能推送, 必须先拉取</li>
+<li>拉取后进入冲突状态, 按照”分支解决冲突”的操作解决</li>
+</ul>
+<blockquote>
+<p>还有其他解决冲突的方法, 比如 stash 命令</p>
+<p>…</p>
+</blockquote>
+<h2 id="github跨团队协作"><a href="#github跨团队协作" class="headerlink" title="github跨团队协作"></a>github跨团队协作</h2><p>团队外成员操作: </p>
+<ul>
+<li>在对方的repo远程仓库里面点击fork, 就复制了一份到自己的本地仓库</li>
+<li>然后正常执行 clone, commit, push</li>
+<li>在此仓库中怎么修改都不会影响原仓库</li>
+<li>发起pull request, new pull request</li>
+<li>create pull request</li>
+</ul>
+<p>然后团队内部人员审核pull request: </p>
+<ul>
+<li><p>点击对应pull request 查看pull request</p>
+</li>
+<li><p>可以进行对话</p>
+</li>
+<li><p>看commits和files changes 审核代码</p>
+</li>
+<li><p>点击merge pull request进行合并</p>
+</li>
+<li><p>confirm merge</p>
+</li>
+<li><p>再将合并后的内容拉取到本地就完成了</p>
+</li>
+</ul>
+<h2 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h2><ol>
+<li><p><code>cd ~</code> 进入HOME目录</p>
+</li>
+<li><p><code>ssh-keygen -t rsa -C &lt;username&gt;</code>  生成ssh密钥</p>
+</li>
+<li><p>进入生成到的目录<code>cat id_rsa.pub</code>查看密钥</p>
+</li>
+<li><p>到github中设置ssh密钥</p>
+</li>
+<li><p>先从repo复制ssh的地址, <code>git remote add origin_ssh &lt;ssh_url&gt;</code></p>
+</li>
+<li><p>push 推送</p>
+</li>
+</ol>
+<p>这样就不需要密码进行推送</p>
+<h1 id="Git工作流"><a href="#Git工作流" class="headerlink" title="Git工作流"></a>Git工作流</h1><ul>
+<li>集中式</li>
+<li>GitFlow</li>
+<li>Forking</li>
+</ul>
+<h2 id="GitFlow"><a href="#GitFlow" class="headerlink" title="GitFlow"></a>GitFlow</h2><p>master 分支: 主分支</p>
+<p>release分支: 预发布分支, 完成后合并到主分支</p>
+<p>develop分支: 开发基准分支, 开发完成合并到主分支</p>
+<p>多个feature_name分支: 各种单个功能开发, 开发完成合并到develop分支</p>
+<p>hotfix分支: 热修复bug, 完成后到合并到主分支</p>
+<h1 id="GitLab服务器"><a href="#GitLab服务器" class="headerlink" title="GitLab服务器"></a>GitLab服务器</h1><p>gitlab是在服务器自行搭建的私人局域网远程库</p>
+<ol>
+<li>将gitlab 的rpm包上传到linux服务器</li>
+<li>到指定目录(opt)</li>
+</ol>
+<p>安装命令: </p>
+<blockquote>
+<p>CentOS 7</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y curl policycoreutils-python openssh-server cronie</span><br><span class="line">sudo lokkit -s http -s ssh</span><br><span class="line">sudo yum install postfix</span><br><span class="line">sudo service postfix start</span><br><span class="line">sudo chlconfig postfix on</span><br><span class="line">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash sudo EXTERNAL_URL=<span class="string">&quot;http://gitlab.example.com&quot;</span> yum -y install gitlab-ee</span><br></pre></td></tr></table></figure>
+
+<p>使用rpm包的话就先装rpm包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -ivh /opt/gitlab-ce....x86.rpm</span><br></pre></td></tr></table></figure>
+
+<p>可以将命令写到.sh脚本文件中, 然后统一跑</p>
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p><code>gitlab-ctl reconfigure</code> 初始化配置gitlab</p>
+<p><code>gitlab-ctl start</code> 启动</p>
+<p><code>gitlab-ctl stop</code> 停止</p>
+<p>直接去访问ip地址, 如果不成功就检查防火墙是否停止</p>
+<p><code>service firework stop</code>停止防火墙</p>
+<p>正常情况需要设置防火墙策略, 而不是关闭</p>
+<p>初次启动设置root的账号密码</p>
+<p>—end—</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Jianyu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://klenq.github.io/2021/12/15/Git和Github基础/">https://klenq.github.io/2021/12/15/Git和Github基础/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Github/">Github</a></div><nav id="pagination"><div class="next-post pull-right"><a href="/2021/12/06/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80%C2%B7)/"><span>Pyhton学习笔记一(数据分析)</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/klenQ/klenQ.github.io/master/img/top_img/ff7_img_2.png)"><div class="layout" id="footer"><div class="copyright">&copy;2020 - 2021 By Jianyu</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">hitokoto</div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>
